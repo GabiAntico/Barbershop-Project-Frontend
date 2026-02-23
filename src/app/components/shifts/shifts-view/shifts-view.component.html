@@ -6,12 +6,22 @@
         <p class="text-slate-300 text-sm">Gestioná tus turnos, buscá y editá rápido.</p>
       </div>
 
-      <button
-        type="button"
-        class="h-10 px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer"
-        (click)="goToCreateShift()">
-        + Nuevo Turno
-      </button>
+      <div class="flex items-center gap-2">
+        <!-- NUEVO BOTÓN -->
+        <button
+          type="button"
+          class="h-10 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
+          (click)="resetSmartSort(dt)">
+          🔄 Orden por defecto
+        </button>
+
+        <button
+          type="button"
+          class="h-10 px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer"
+          (click)="goToCreateShift()">
+          + Nuevo Turno
+        </button>
+      </div>
     </div>
 
     <div class="flex items-center gap-2 mb-3">
@@ -39,8 +49,8 @@
     >
       <ng-template pTemplate="header">
         <tr>
-          <th>Fecha</th>
-          <th>Hora</th>
+          <th pSortableColumn="datetime">Fecha <p-sortIcon field="datetime"></p-sortIcon></th>
+          <th pSortableColumn="datetime">Hora <p-sortIcon field="datetime"></p-sortIcon></th>
           <th>Cliente</th>
           <th class="pr-6 w-[180px]">
             <div class="flex justify-end">
