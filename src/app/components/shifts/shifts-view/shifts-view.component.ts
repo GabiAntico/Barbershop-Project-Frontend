@@ -49,13 +49,11 @@ export class ShiftsViewComponent implements OnInit {
   private parseShiftDate(datetime: string): Date | null {
     if (!datetime) return null;
 
-    // ISO: "2026-02-23T11:30:00"
     if (datetime.includes('T')) {
       const d = new Date(datetime);
       return isNaN(d.getTime()) ? null : d;
     }
 
-    // "yyyy-MM-dd HH:mm"
     const [datePart, timePart] = datetime.split(' ');
     if (!datePart || !timePart) return null;
 
@@ -91,14 +89,11 @@ export class ShiftsViewComponent implements OnInit {
   }
 
   resetSmartSort(table: any) {
-    // Restaurar orden inteligente
     this.shifts = [...this.originalSorted];
 
-    // Limpiar estado interno del sort
     table.sortField = null;
     table.sortOrder = 0;
 
-    // Opcional: limpiar filtros también
     table.clear();
   }
 }
