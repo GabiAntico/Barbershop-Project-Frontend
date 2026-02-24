@@ -40,7 +40,7 @@ export class EditShiftComponent implements OnInit {
     { label: 'Completado', value: 'COMPLETED' }
   ];
 
-  minDate = new Date();
+  minDate: null | Date = new Date();
 
   ngOnInit() {
     this.formShift = this.fb.group({
@@ -59,15 +59,22 @@ export class EditShiftComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     this.shiftService.getShiftById(Number(id)).subscribe({
       next: (data: ShiftResponse) => {
+
         if (!data.datetime) return;
 
-        const fullDate = new Date(data.datetime);
+        const fullDate = new Date(data.datetime); // o data.datetime
+        const now = new Date();
 
-        this.formShift.patchValue({
-          date: fullDate,
-          time: fullDate,
-          client: data.clientId,
-          status: data.status,
+        // Si el turno ya es pasado, no restringimos minDate para poder precargar
+        this.minDate = fullDate < now ? new Date(2000, 0, 1) : now;
+
+        setTimeout(() => {
+          this.formShift.patchValue({
+            date: fullDate,
+            time: fullDate,
+            client: data.clientId,
+            status: data.status,
+          });
         });
       }
     })
