@@ -101,6 +101,44 @@ export class AgendaViewComponent implements OnInit {
     });
   }
 
+  sendWhatsAppReminder(slot: AgendaSlotResponse): void {
+    if (!this.canSendWhatsAppReminder(slot)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Turno pasado',
+        detail: 'No se puede enviar un recordatorio para un turno que ya paso'
+      });
+      return;
+    }
+
+    const client = slot.shift?.client;
+    const phoneNumber = this.normalizePhoneNumber(client?.phoneNumber);
+
+    if (!phoneNumber) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Telefono faltante',
+        detail: 'El cliente no tiene un telefono valido para enviar WhatsApp'
+      });
+      return;
+    }
+
+    const firstName = client?.firstName?.trim();
+    const greeting = firstName ? `Hola ${firstName},` : 'Hola,';
+    const message = `${greeting} te recordamos que tenés un turno el ${this.getReminderDateText(slot.time)} a las ${slot.time}.`;
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+    window.open(url, '_blank', 'noopener');
+  }
+
+  canSendWhatsAppReminder(slot: AgendaSlotResponse): boolean {
+    if (!slot.shift) return false;
+
+    const slotTime = this.getSlotDateTime(slot.time).getTime();
+
+    return !Number.isNaN(slotTime) && slotTime >= Date.now();
+  }
+
   getClientName(client: ClientResponse | null | undefined): string {
     if (!client) return '-';
 
@@ -138,5 +176,42 @@ export class AgendaViewComponent implements OnInit {
     const [year, month, day] = date.split('-').map(Number);
 
     return new Date(year, month - 1, day);
+  }
+
+  private normalizePhoneNumber(phoneNumber: string | null | undefined): string {
+    return (phoneNumber ?? '').replace(/\D/g, '');
+  }
+
+  private getSlotDateTime(time: string): Date {
+    const [hours, minutes] = time.split(':').map(Number);
+    const date = new Date(this.selectedDate);
+    date.setHours(hours, minutes, 0, 0);
+
+    return date;
+  }
+
+  private getReminderDateText(time: string): string {
+    const slotDate = this.getSlotDateTime(time);
+    const weekday = slotDate.toLocaleDateString('es-AR', { weekday: 'long' });
+
+    if (this.isToday(slotDate)) {
+      return 'hoy';
+    }
+
+    const fullDate = slotDate.toLocaleDateString('es-AR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    return `${weekday}, ${fullDate}`;
+  }
+
+  private isToday(date: Date): boolean {
+    const today = new Date();
+
+    return date.getFullYear() === today.getFullYear()
+      && date.getMonth() === today.getMonth()
+      && date.getDate() === today.getDate();
   }
 }

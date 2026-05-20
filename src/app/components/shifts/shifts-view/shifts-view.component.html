@@ -1,23 +1,31 @@
-<div class="flex justify-center mt-12 px-4">
-  <div class="w-full max-w-5xl bg-slate-900/60 border border-slate-800 backdrop-blur p-5 rounded-xl shadow-2xl">
+<div class="flex justify-center mt-6 sm:mt-12 px-0 sm:px-4">
+  <div class="w-full max-w-5xl bg-slate-900/60 border border-slate-800 backdrop-blur p-3 sm:p-5 rounded-xl shadow-2xl">
 
-    <div class="flex items-center justify-between gap-3 mb-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
       <div>
         <h1 class="text-xl font-bold">Turnos</h1>
         <p class="text-slate-300 text-sm">Gestioná tus turnos y editá rápido.</p>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2">
         <button
           type="button"
-          class="h-10 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
+          class="h-10 w-full sm:w-auto px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
           (click)="resetSmartSort(dt)">
           🔄 Orden por defecto
         </button>
 
         <button
           type="button"
-          class="h-10 px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer"
+          [disabled]="shifts.length === 0"
+          class="h-10 w-full sm:w-auto px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed"
+          (click)="exportShiftsPdf()">
+          Exportar PDF
+        </button>
+
+        <button
+          type="button"
+          class="h-10 w-full sm:w-auto px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer"
           (click)="goToCreateShift()">
           + Nuevo Turno
         </button>
@@ -44,6 +52,7 @@
       [rows]="8"
       [rowsPerPageOptions]="[8, 15, 25]"
       [showCurrentPageReport]="true"
+      responsiveLayout="scroll"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} turnos"
       styleClass="p-datatable-sm"
     >

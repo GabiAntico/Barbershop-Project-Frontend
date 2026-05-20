@@ -1,4 +1,4 @@
-<div class="flex justify-center mt-12">
+<div class="flex justify-center mt-6 sm:mt-12 px-3 sm:px-4">
   <form
     (ngSubmit)="putVisit()"
     [formGroup]="formVisit"
@@ -15,7 +15,7 @@
     <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-4 mb-4">
       <h2 class="text-sm font-semibold text-slate-200 mb-3">Informacion del turno</h2>
 
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="flex flex-col">
           <span class="text-xs text-slate-400 mb-1">Fecha</span>
           <div class="h-10 px-3 rounded-lg bg-slate-950 border border-slate-700 flex items-center text-slate-100">
@@ -60,7 +60,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 mb-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
       <div class="flex flex-col">
         <label class="text-slate-200 mb-1">Monto total</label>
         <input
@@ -101,7 +101,7 @@
     </div>
 
     @if (formVisit.get('paymentStatus')?.value === 'PAID') {
-      <div class="grid grid-cols-2 gap-4 mb-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div class="flex flex-col">
           <label class="text-slate-200 mb-1">Fecha de pago</label>
           <p-date-picker
@@ -133,10 +133,10 @@
       </div>
     }
 
-    <div class="flex gap-2">
+    <div class="flex flex-col sm:flex-row gap-2">
       <button
         type="submit"
-        class="h-10 px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer"
+        class="h-10 w-full sm:w-auto px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer"
       >
         Guardar
       </button>
@@ -144,7 +144,7 @@
       <button
         [routerLink]="['/visits-view']"
         type="button"
-        class="h-10 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
+        class="h-10 w-full sm:w-auto px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
       >
         Cancelar
       </button>

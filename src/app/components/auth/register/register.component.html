@@ -1,4 +1,4 @@
-<div class="flex justify-center mt-12 px-4">
+<div class="flex justify-center mt-6 sm:mt-12 px-3 sm:px-4">
   <form
     [formGroup]="form"
     (ngSubmit)="register()"
@@ -42,10 +42,10 @@
       />
     </div>
 
-    <div class="flex items-center justify-between gap-2">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
       <button
         type="submit"
-        class="h-10 px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+        class="h-10 w-full sm:w-auto px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
         [disabled]="isSubmitting"
       >
         Registrarme
@@ -54,7 +54,7 @@
       <button
         [routerLink]="['/login']"
         type="button"
-        class="h-10 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
+        class="h-10 w-full sm:w-auto px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
       >
         Ya tengo cuenta
       </button>

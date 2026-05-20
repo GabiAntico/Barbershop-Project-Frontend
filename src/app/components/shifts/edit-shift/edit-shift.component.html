@@ -1,4 +1,4 @@
-<div class="flex justify-center mt-12">
+<div class="flex justify-center mt-6 sm:mt-12 px-3 sm:px-4">
   <form (ngSubmit)="putShift(formShift)" class="bg-slate-900/60 border border-slate-800 backdrop-blur flex flex-col w-full max-w-2xl p-4 rounded-xl shadow-2xl" [formGroup]="formShift">
     <h1 class="font-bold mb-4">Editar turno</h1>
 
@@ -17,7 +17,7 @@
 
     <div class="flex flex-col mb-4">
       <label>Hora</label>
-      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mt-1">
+      <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 mt-1">
         @if (loadingTimeSlots) {
           <div class="col-span-full h-24 rounded-lg border border-slate-800 bg-slate-950/70 flex items-center justify-center text-sm text-slate-400">
             Cargando horarios...
@@ -117,11 +117,11 @@
       </p-select>
     </div>
 
-    <div class="flex gap-2">
-      <button type="submit" class="h-10 px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer">
+    <div class="flex flex-col sm:flex-row gap-2">
+      <button type="submit" class="h-10 w-full sm:w-auto px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer">
         Guardar
       </button>
-      <button [routerLink]="['/shifts-view']" type="button" class="h-10 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer">
+      <button [routerLink]="['/shifts-view']" type="button" class="h-10 w-full sm:w-auto px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer">
         Cancelar
       </button>
     </div>

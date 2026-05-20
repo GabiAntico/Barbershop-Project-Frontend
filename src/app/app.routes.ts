@@ -15,6 +15,7 @@ import {authGuard} from './guards/auth.guard';
 import {SettingsViewComponent} from './components/settings/settings-view/settings-view.component';
 import {AgendaViewComponent} from './components/shifts/agenda-view/agenda-view.component';
 import {DashboardViewComponent} from './components/dashboard/dashboard-view/dashboard-view.component';
+import {ClientDashboardViewComponent} from './components/dashboard/client-dashboard-view/client-dashboard-view.component';
 
 export const routes: Routes = [
   {
@@ -34,6 +35,9 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard', component: DashboardViewComponent, canActivate: [authGuard]
+  },
+  {
+    path: 'dashboard/clients', component: ClientDashboardViewComponent, canActivate: [authGuard]
   },
   {
     path: 'agenda', component: AgendaViewComponent, canActivate: [authGuard]

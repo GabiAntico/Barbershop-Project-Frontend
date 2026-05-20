@@ -1,5 +1,5 @@
-<div class="flex justify-center mt-12">
-  <form (ngSubmit)="postClient(form)" class="bg-slate-900/60 border border-slate-800 backdrop-blur flex flex-col w-[50vh] p-4 rounded-xl shadow-2xl" [formGroup]="form">
+<div class="flex justify-center mt-6 sm:mt-12 px-3 sm:px-4">
+  <form (ngSubmit)="postClient(form)" class="bg-slate-900/60 border border-slate-800 backdrop-blur flex flex-col w-full max-w-md p-4 rounded-xl shadow-2xl" [formGroup]="form">
     <h1 class="font-bold mb-4">Crear cliente</h1>
     <div class="flex flex-col mb-4">
       <label class="text-slate-200 mb-1">Telefono</label>
@@ -77,11 +77,11 @@
          focus:!ring-0
          !text-slate-100">
     </div>
-    <div class="flex gap-2">
-      <button type="submit" class="h-10 px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer">
+    <div class="flex flex-col sm:flex-row gap-2">
+      <button type="submit" class="h-10 w-full sm:w-auto px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer">
         Guardar
       </button>
-      <button [routerLink]="['/clients-view']" type="button" class="h-10 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer">
+      <button [routerLink]="['/clients-view']" type="button" class="h-10 w-full sm:w-auto px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer">
         Cancelar
       </button>
     </div>

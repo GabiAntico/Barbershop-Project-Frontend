@@ -2,7 +2,7 @@
 <div class="min-h-screen text-slate-100">
 
   <!-- Topbar minima -->
-  <header class="sticky top-0 z-20 flex items-center gap-3 px-4 py-3 border-b border-slate-800 bg-slate-950/70 backdrop-blur">
+  <header class="sticky top-0 z-20 flex items-center gap-3 px-3 sm:px-4 py-3 border-b border-slate-800 bg-slate-950/70 backdrop-blur">
     <!-- Boton hamburguesa -->
     <button
       type="button"
@@ -13,10 +13,10 @@
       &#9776;
     </button>
 
-    <div class="font-semibold tracking-tight">Turnos</div>
+    <div class="font-semibold tracking-tight truncate">Turnos</div>
 
     <!-- Seccion actual -->
-    <div class="ml-auto text-sm text-slate-400">
+    <div class="ml-auto text-sm text-slate-400 truncate text-right">
       {{ getCurrentSectionLabel() }}
     </div>
   </header>
@@ -31,7 +31,7 @@
 
   <!-- Sidebar Drawer -->
   <aside
-    class="fixed top-0 left-0 z-40 h-full w-72 bg-slate-900 border-r border-slate-800
+    class="fixed top-0 left-0 z-40 h-full w-[86vw] max-w-72 bg-slate-900 border-r border-slate-800
            transform transition-transform duration-200 ease-out"
     [ngClass]="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
   >
@@ -50,7 +50,7 @@
     </div>
 
     <!-- Opciones -->
-    <nav class="p-2 space-y-4">
+    <nav class="p-2 space-y-4 overflow-y-auto pb-24 h-[calc(100%-73px)]">
       <section>
         <div class="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
           Cuenta
@@ -73,7 +73,7 @@
 
       <section class="pt-3 border-t border-slate-800/80">
         <div class="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-          Dashboard
+          Estadisticas
         </div>
 
         <div class="space-y-1">
@@ -82,10 +82,21 @@
             class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left
                    hover:bg-slate-800/40"
             [routerLink]="['/dashboard']"
-            [ngClass]="isActive('/dashboard') ? 'bg-slate-800/60 text-white' : 'text-slate-300 hover:bg-slate-800/40 cursor-pointer'"
+            [ngClass]="isActive('/dashboard') && !isActive('/dashboard/clients') ? 'bg-slate-800/60 text-white' : 'text-slate-300 hover:bg-slate-800/40 cursor-pointer'"
           >
             <span class="w-5">#</span>
-            <span>Dashboard</span>
+            <span>General</span>
+          </button>
+
+          <button
+            type="button"
+            class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left
+                   hover:bg-slate-800/40"
+            [routerLink]="['/dashboard/clients']"
+            [ngClass]="isActive('/dashboard/clients') ? 'bg-slate-800/60 text-white' : 'text-slate-300 hover:bg-slate-800/40 cursor-pointer'"
+          >
+            <span class="w-5">#</span>
+            <span>Por cliente</span>
           </button>
         </div>
       </section>
@@ -215,7 +226,7 @@
   </aside>
 
   <!-- Contenido principal -->
-  <main class="px-4 py-6">
+  <main class="px-3 sm:px-4 py-4 sm:py-6">
     <p-toast></p-toast>
     <router-outlet></router-outlet>
   </main>

@@ -1,2 +1,51 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+.p-datatable-wrapper {
+  overflow-x: auto;
+}
+
+.p-datatable table {
+  min-width: 720px;
+}
+
+.status-filter {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.status-filter .p-selectbutton {
+  display: inline-flex;
+  min-width: max-content;
+}
+
+.p-datepicker,
+.p-select,
+.p-inputtext,
+.p-inputnumber,
+.p-dropdown {
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .p-datepicker-panel,
+  .p-select-overlay {
+    max-width: calc(100vw - 24px);
+  }
+
+  .p-paginator {
+    gap: 0.25rem;
+  }
+
+  .p-paginator-current {
+    width: 100%;
+    text-align: center;
+    order: 10;
+  }
+}
