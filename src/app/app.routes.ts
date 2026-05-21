@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import {CreateClientComponent} from './components/clients/create-client/create-client.component';
 import {ClientsViewComponent} from './components/clients/clients-view/clients-view.component';
+import {ClientNotesViewComponent} from './components/clients/client-notes-view/client-notes-view.component';
 import {CreateShiftComponent} from './components/shifts/create-shift/create-shift.component';
 import {ShiftsViewComponent} from './components/shifts/shifts-view/shifts-view.component';
 import {EditClientComponent} from './components/clients/edit-client/edit-client.component';
@@ -47,6 +48,9 @@ export const routes: Routes = [
   },
   {
     path: 'edit-client/:id', component: EditClientComponent, canActivate: [authGuard]
+  },
+  {
+    path: 'clients/:id/notes', component: ClientNotesViewComponent, canActivate: [authGuard]
   },
   {
     path: 'create-shift', component: CreateShiftComponent, canActivate: [authGuard]

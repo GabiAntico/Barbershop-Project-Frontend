@@ -29,7 +29,8 @@ export class CreateClientComponent implements OnInit {
       phoneNumber: ['', [Validators.required]],
       firstName: [''],
       lastName: [''],
-      documentNumber: ['']
+      documentNumber: [''],
+      notes: ['']
     });
   }
 
@@ -50,7 +51,8 @@ export class CreateClientComponent implements OnInit {
       phoneNumber: form.controls['phoneNumber'].value.trim(),
       firstName: this.emptyToNull(form.controls['firstName'].value),
       lastName: this.emptyToNull(form.controls['lastName'].value),
-      documentNumber: this.emptyToNull(form.controls['documentNumber'].value)
+      documentNumber: this.emptyToNull(form.controls['documentNumber'].value),
+      notes: this.emptyToNull(form.controls['notes'].value)
     }
     this.clientService.postClient(client).subscribe({
       next: () => {

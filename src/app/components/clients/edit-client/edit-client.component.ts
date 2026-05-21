@@ -36,6 +36,7 @@ export class EditClientComponent implements OnInit {
       documentNumber: [''],
       email: ['', [Validators.email]],
       phoneNumber: ['', [Validators.required]],
+      notes: ['']
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -48,6 +49,7 @@ export class EditClientComponent implements OnInit {
           documentNumber: client.documentNumber ?? '',
           email: client.email ?? '',
           phoneNumber: client.phoneNumber ?? '',
+          notes: client.notes ?? ''
         });
       },
       error: (err) => {
@@ -85,7 +87,8 @@ export class EditClientComponent implements OnInit {
       lastName: emptyToNull(form.get('lastName')?.value),
       documentNumber: emptyToNull(form.get('documentNumber')?.value),
       email: emptyToNull(form.get('email')?.value),
-      phoneNumber: form.get('phoneNumber')?.value.trim()
+      phoneNumber: form.get('phoneNumber')?.value.trim(),
+      notes: emptyToNull(form.get('notes')?.value)
     };
 
     this.clientService.putClient(clientRequest).subscribe({

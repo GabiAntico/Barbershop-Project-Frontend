@@ -40,7 +40,9 @@ export class ClientsViewComponent implements OnInit {
   }
 
   viewClient(id: number) {
-
+    this.router.navigate(['/dashboard/clients'], {
+      queryParams: { clientId: id }
+    });
   }
 
   getClientName(client: ClientResponse): string {

@@ -57,9 +57,40 @@
               <p class="text-sm text-slate-400 capitalize">{{ getMonthLabel() }}</p>
             </div>
 
-            <div class="rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-4 py-3">
-              <span class="text-sm text-indigo-200">Presentismo</span>
-              <div class="text-2xl font-bold text-white">{{ dashboard.attendance.attendanceRate }}%</div>
+            <div class="flex flex-col sm:flex-row gap-2 sm:items-start">
+              <button
+                type="button"
+                class="h-10 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
+                (click)="goToClientNotes()"
+              >
+                Ver notas
+              </button>
+
+              <div class="rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-4 py-3">
+                <span class="text-sm text-indigo-200">Presentismo</span>
+                <div class="text-2xl font-bold text-white">{{ dashboard.attendance.attendanceRate }}%</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-5">
+            <div class="rounded-lg border border-slate-800 bg-slate-900/70 p-3">
+              <span class="text-sm text-slate-400">Ultima visita</span>
+              <div class="mt-2 text-lg font-bold text-slate-100">
+                {{ formatVisitDate(dashboard.visitFrequency.lastVisitAt) }}
+              </div>
+            </div>
+            <div class="rounded-lg border border-slate-800 bg-slate-900/70 p-3">
+              <span class="text-sm text-slate-400">Frecuencia promedio</span>
+              <div class="mt-2 text-lg font-bold text-slate-100">
+                {{ getAverageCutFrequencyLabel() }}
+              </div>
+            </div>
+            <div class="rounded-lg border border-slate-800 bg-slate-900/70 p-3">
+              <span class="text-sm text-slate-400">Visitas historicas</span>
+              <div class="mt-2 text-lg font-bold text-slate-100">
+                {{ dashboard.visitFrequency.visitsCount }}
+              </div>
             </div>
           </div>
 
@@ -131,3 +162,34 @@
     }
   </div>
 </div>
+
+@if (showNotesConfirmation) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm">
+    <div class="w-full max-w-md rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-2xl">
+      <div class="mb-4">
+        <h2 class="text-lg font-bold text-slate-100">Abrir notas internas</h2>
+        <p class="mt-2 text-sm leading-relaxed text-slate-300">
+          Las notas pueden contener informacion privada del negocio. Abrilas solo si no estan visibles para el cliente.
+        </p>
+      </div>
+
+      <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          class="h-10 w-full rounded-lg bg-slate-800 px-4 text-slate-200 hover:bg-slate-700 sm:w-auto cursor-pointer"
+          (click)="closeNotesConfirmation()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="h-10 w-full rounded-lg bg-indigo-500 px-4 font-medium text-white hover:bg-indigo-400 sm:w-auto cursor-pointer"
+          (click)="confirmOpenNotes()"
+        >
+          Abrir notas
+        </button>
+      </div>
+    </div>
+  </div>
+}

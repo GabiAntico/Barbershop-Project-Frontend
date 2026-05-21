@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass, NgStyle } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import { MessageService } from 'primeng/api';
@@ -31,6 +32,7 @@ export class ClientDashboardViewComponent implements OnInit {
   selectedMonthDate = new Date();
   dashboard: ClientDashboardResponse | null = null;
   loading = false;
+  showNotesConfirmation = false;
 
   readonly attendanceColors = {
     completed: '#22c55e',
@@ -42,18 +44,23 @@ export class ClientDashboardViewComponent implements OnInit {
   constructor(
     private clientService: ClientService,
     private dashboardService: DashboardService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.clientService.getAllClients().subscribe({
       next: clients => {
+        const clientIdParam = Number(this.route.snapshot.queryParamMap.get('clientId'));
         this.clients = clients.map(client => ({
           ...client,
           label: this.getClientLabel(client)
         }));
         if (this.clients.length > 0) {
-          this.selectedClientId = this.clients[0].id;
+          this.selectedClientId = this.clients.some(client => client.id === clientIdParam)
+            ? clientIdParam
+            : this.clients[0].id;
           this.loadDashboard();
         }
       },
@@ -119,6 +126,39 @@ export class ClientDashboardViewComponent implements OnInit {
       month: 'long',
       year: 'numeric'
     });
+  }
+
+  formatVisitDate(datetime: string | null | undefined): string {
+    if (!datetime) return '-';
+
+    return new Date(datetime).toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  getAverageCutFrequencyLabel(): string {
+    const average = this.dashboard?.visitFrequency.averageDaysBetweenVisits;
+
+    return average ? `Cada ${average} dias` : '-';
+  }
+
+  goToClientNotes(): void {
+    if (!this.selectedClientId) return;
+
+    this.showNotesConfirmation = true;
+  }
+
+  closeNotesConfirmation(): void {
+    this.showNotesConfirmation = false;
+  }
+
+  confirmOpenNotes(): void {
+    if (!this.selectedClientId) return;
+
+    this.showNotesConfirmation = false;
+    this.router.navigate(['/clients', this.selectedClientId, 'notes']);
   }
 
   getPieStyle(): Record<string, string> {

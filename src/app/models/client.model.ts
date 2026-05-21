@@ -4,6 +4,7 @@ export interface CreationClientRequest {
   firstName: string | null;
   lastName: string | null;
   documentNumber: string | null;
+  notes: string | null;
 }
 
 export interface ClientRequest {
@@ -13,6 +14,7 @@ export interface ClientRequest {
   documentNumber: string | null;
   email: string | null;
   phoneNumber: string;
+  notes: string | null;
 }
 
 export interface ClientResponse {
@@ -22,4 +24,5 @@ export interface ClientResponse {
   firstName: string | null;
   lastName: string | null;
   documentNumber: string | null;
+  notes: string | null;
 }

@@ -41,6 +41,7 @@ export class AppComponent implements OnInit {
     if (this.isActive('/dashboard')) return 'Estadisticas';
     if (this.isActive('/agenda')) return 'Agenda';
     if (this.isActive('/create-client')) return 'Crear clientes';
+    if (this.router.url.includes('/clients/') && this.router.url.includes('/notes')) return 'Notas internas';
     if (this.isActive('/clients-view')) return 'Ver clientes';
     if (this.isActive('/create-shift')) return 'Cargar turnos';
     if (this.isActive('/shifts-view')) return 'Ver turnos';

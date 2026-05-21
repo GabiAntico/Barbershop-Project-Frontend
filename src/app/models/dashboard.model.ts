@@ -23,6 +23,7 @@ export interface ClientDashboardResponse {
   attendance: AttendanceStats;
   selectedMonthRevenue: RevenueStats;
   historicalRevenue: RevenueStats;
+  visitFrequency: VisitFrequencyStats;
 }
 
 export interface ClientStats {
@@ -31,4 +32,11 @@ export interface ClientStats {
   lastName: string | null;
   phoneNumber: string | null;
   email: string | null;
+  notes: string | null;
+}
+
+export interface VisitFrequencyStats {
+  lastVisitAt: string | null;
+  averageDaysBetweenVisits: number | null;
+  visitsCount: number;
 }

@@ -1,0 +1,53 @@
+<div class="flex justify-center mt-6 sm:mt-12 px-3 sm:px-4">
+  <div class="w-full max-w-2xl bg-slate-900/60 border border-slate-800 backdrop-blur p-4 sm:p-5 rounded-xl shadow-2xl">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
+      <div>
+        <h1 class="text-xl font-bold text-slate-100">Notas internas</h1>
+        <p class="text-slate-300 text-sm">Informacion privada para uso interno del negocio.</p>
+      </div>
+
+      <span class="w-fit rounded-full border border-yellow-500/40 bg-yellow-500/10 px-3 py-1 text-xs font-medium text-yellow-200">
+        Solo uso interno
+      </span>
+    </div>
+
+    @if (loading) {
+      <div class="h-28 rounded-lg border border-slate-800 bg-slate-950/70 flex items-center justify-center text-sm text-slate-400">
+        Cargando notas...
+      </div>
+    } @else if (client) {
+      <div class="rounded-lg border border-slate-800 bg-slate-950/70 p-4 mb-4">
+        <span class="text-xs text-slate-400">Cliente</span>
+        <div class="mt-1 text-lg font-bold text-slate-100">{{ getClientLabel() }}</div>
+        <div class="mt-1 text-sm text-slate-400">{{ client.phoneNumber || client.email || '-' }}</div>
+      </div>
+
+      <div class="rounded-lg border border-slate-800 bg-slate-950/70 p-4 mb-4">
+        @if (client.notes) {
+          <p class="whitespace-pre-wrap text-slate-100 leading-relaxed">{{ client.notes }}</p>
+        } @else {
+          <p class="text-slate-400">Este cliente no tiene notas cargadas.</p>
+        }
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-2">
+        <button
+          type="button"
+          [routerLink]="['/edit-client', client.id]"
+          class="h-10 w-full sm:w-auto px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer"
+        >
+          Editar notas
+        </button>
+
+        <button
+          type="button"
+          [routerLink]="['/dashboard/clients']"
+          [queryParams]="{ clientId: client.id }"
+          class="h-10 w-full sm:w-auto px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
+        >
+          Volver
+        </button>
+      </div>
+    }
+  </div>
+</div>
