@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { InputText } from 'primeng/inputtext';
 import { AuthService } from '../../../services/auth.service';
+import { WorkContextService } from '../../../services/work-context.service';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private workContextService: WorkContextService,
     private router: Router,
     private messageService: MessageService
   ) { }
@@ -51,7 +53,10 @@ export class LoginComponent implements OnInit {
           summary: 'Exito',
           detail: 'Sesion iniciada correctamente'
         });
-        this.router.navigate(['/shifts-view']);
+        this.workContextService.loadContext().subscribe({
+          next: context => this.router.navigate([context.temporaryPassword ? '/change-password' : '/shifts-view']),
+          error: () => this.router.navigate(['/shifts-view'])
+        });
       },
       error: () => {
         this.isSubmitting = false;

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.model';
+import { ChangePasswordRequest, LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +24,10 @@ export class AuthService {
     return this.http.post<void>(`${this.authUrl}/register`, request);
   }
 
+  changePassword(request: ChangePasswordRequest): Observable<void> {
+    return this.http.post<void>(`${this.authUrl}/change-password`, request);
+  }
+
   setToken(token: string): void {
     if (typeof localStorage === 'undefined') return;
 
@@ -40,6 +44,7 @@ export class AuthService {
     if (typeof localStorage === 'undefined') return;
 
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('active_branch_id');
   }
 
   isLoggedIn(): boolean {

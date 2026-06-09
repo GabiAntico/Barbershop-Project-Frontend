@@ -11,6 +11,7 @@ import {EditVisitComponent} from './components/visits/edit-visit/edit-visit.comp
 import {VisitsViewComponent} from './components/visits/visits-view/visits-view.component';
 import {LoginComponent} from './components/auth/login/login.component';
 import {RegisterComponent} from './components/auth/register/register.component';
+import {ChangePasswordComponent} from './components/auth/change-password/change-password.component';
 import {AccessDeniedComponent} from './components/auth/access-denied/access-denied.component';
 import {authGuard} from './guards/auth.guard';
 import {SettingsViewComponent} from './components/settings/settings-view/settings-view.component';
@@ -30,6 +31,9 @@ export const routes: Routes = [
   },
   {
     path: 'access-denied', component: AccessDeniedComponent
+  },
+  {
+    path: 'change-password', component: ChangePasswordComponent, canActivate: [authGuard]
   },
   {
     path: 'create-client', component: CreateClientComponent, canActivate: [authGuard]

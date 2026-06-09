@@ -1,14 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {NavigationEnd, RouterLink, RouterOutlet} from '@angular/router';
 import {NgClass} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import { Router } from '@angular/router';
 import {filter} from 'rxjs';
 import {ToastModule} from 'primeng/toast';
+import {Select} from 'primeng/select';
 import {AuthService} from './services/auth.service';
+import {WorkContextService} from './services/work-context.service';
+import {Branch, WorkContext} from './models/work-context.model';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgClass, RouterLink, ToastModule],
+  imports: [RouterOutlet, NgClass, RouterLink, ToastModule, FormsModule, Select],
   templateUrl: './app.component.html',
   standalone: true,
   styleUrl: './app.component.css'
@@ -16,16 +20,38 @@ import {AuthService} from './services/auth.service';
 export class AppComponent implements OnInit {
   title = 'shifts-frontend';
   sidebarOpen = false;
+  context: WorkContext | null = null;
+  activeBranch: Branch | null = null;
+  selectedBranchId: number | null = null;
 
   selectedOption!: number;
 
-  constructor(private router: Router, private authService: AuthService) { }
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private workContextService: WorkContextService
+  ) { }
 
   ngOnInit() {
+    this.workContextService.context$.subscribe(context => {
+      this.context = context;
+    });
+    this.workContextService.activeBranch$.subscribe(branch => {
+      this.activeBranch = branch;
+      this.selectedBranchId = branch?.id ?? null;
+    });
+
+    if (this.authService.isLoggedIn()) {
+      this.loadContext();
+    }
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         this.sidebarOpen = false;
+        if (this.authService.isLoggedIn() && !this.context) {
+          this.loadContext();
+        }
       });
   }
 
@@ -36,6 +62,7 @@ export class AppComponent implements OnInit {
   getCurrentSectionLabel(): string {
     if (this.isActive('/login')) return 'Iniciar sesion';
     if (this.isActive('/register')) return 'Crear cuenta';
+    if (this.isActive('/change-password')) return 'Cambiar contraseña';
     if (this.isActive('/access-denied')) return 'Acceso denegado';
     if (this.isActive('/dashboard/clients')) return 'Estadisticas por cliente';
     if (this.isActive('/dashboard')) return 'Estadisticas';
@@ -57,6 +84,25 @@ export class AppComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+    this.workContextService.clear();
     this.router.navigate(['/login']);
+  }
+
+  onBranchSelected(branchId: number | string | null): void {
+    if (!branchId) return;
+
+    this.workContextService.setActiveBranch(Number(branchId));
+    if (typeof window !== 'undefined' && this.authService.isLoggedIn()) {
+      window.location.reload();
+    }
+  }
+
+  private loadContext(): void {
+    this.workContextService.loadContext().subscribe({
+      error: () => {
+        this.context = null;
+        this.activeBranch = null;
+      }
+    });
   }
 }

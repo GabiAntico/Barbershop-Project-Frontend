@@ -31,7 +31,7 @@
         pInputText
         type="text"
         class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 !text-slate-100 focus:!border-indigo-400 focus:!ring-0"
-        placeholder="Turno, estado, metodo o moneda..."
+        placeholder="Cliente, empleado, estado, metodo o moneda..."
         (input)="dt.filterGlobal(search.value, 'contains')"
       />
     </div>
@@ -54,7 +54,7 @@
       [paginator]="true"
       [rows]="8"
       [rowsPerPageOptions]="[8, 15, 25]"
-      [globalFilterFields]="['shiftId','currency','paymentStatus','paymentMethod']"
+      [globalFilterFields]="['client.firstName','client.lastName','client.phoneNumber','client.email','attendedByName','attendedByEmail','currency','paymentStatus','paymentMethod']"
       [showCurrentPageReport]="true"
       responsiveLayout="scroll"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} visitas"
@@ -62,7 +62,8 @@
     >
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="shiftId">Turno <p-sortIcon field="shiftId"></p-sortIcon></th>
+          <th>Cliente</th>
+          <th>Atendido por</th>
           <th pSortableColumn="totalAmount">Monto <p-sortIcon field="totalAmount"></p-sortIcon></th>
           <th>Estado de pago</th>
           <th pSortableColumn="paidAt">Fecha de pago <p-sortIcon field="paidAt"></p-sortIcon></th>
@@ -76,7 +77,11 @@
       <ng-template pTemplate="body" let-v>
         <tr class="hover:bg-slate-800/40 transition">
           <td class="text-slate-100">
-            #{{ v.shiftId }}
+            {{ getClientLabel(v.client) }}
+          </td>
+
+          <td class="text-slate-200">
+            {{ getAttendedByLabel(v) }}
           </td>
 
           <td class="text-slate-200">
@@ -123,7 +128,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="6" class="py-8 text-center text-slate-300">
+          <td colspan="7" class="py-8 text-center text-slate-300">
             No hay visitas para mostrar.
           </td>
         </tr>

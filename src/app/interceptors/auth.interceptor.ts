@@ -8,6 +8,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = typeof localStorage !== 'undefined'
     ? localStorage.getItem('auth_token')
     : null;
+  const branchId = typeof localStorage !== 'undefined'
+    ? localStorage.getItem('active_branch_id')
+    : null;
 
   if (!token) {
     return next(req).pipe(
@@ -23,7 +26,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const authReq = req.clone({
     setHeaders: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      ...(branchId ? { 'X-Branch-Id': branchId } : {})
     }
   });
 
@@ -32,6 +36,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 401) {
         if (typeof localStorage !== 'undefined') {
           localStorage.removeItem('auth_token');
+          localStorage.removeItem('active_branch_id');
         }
 
         router.navigate(['/login']);

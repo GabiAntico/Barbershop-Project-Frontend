@@ -26,6 +26,10 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
+      barbershopName: ['', Validators.required],
+      adminName: [''],
+      branchName: ['', Validators.required],
+      branchAddress: [''],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
@@ -55,6 +59,10 @@ export class RegisterComponent implements OnInit {
     this.isSubmitting = true;
 
     this.authService.register({
+      barbershopName: this.form.value.barbershopName,
+      adminName: this.form.value.adminName,
+      branchName: this.form.value.branchName,
+      branchAddress: this.form.value.branchAddress,
       email: this.form.value.email,
       password: this.form.value.password
     }).subscribe({

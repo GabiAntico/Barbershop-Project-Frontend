@@ -6,8 +6,10 @@ import { DatePicker } from 'primeng/datepicker';
 import { MessageService } from 'primeng/api';
 import { SettingsService } from '../../../services/settings.service';
 import { ScheduleSlot, ScheduleSettingsRequest } from '../../../models/settings.model';
+import { WorkContextService } from '../../../services/work-context.service';
+import { Branch, Employee, WorkContext } from '../../../models/work-context.model';
 
-type SettingsTab = 'amount' | 'schedule';
+type SettingsTab = 'amount' | 'schedule' | 'branches' | 'employees';
 type ScheduleMode = 'DATE' | 'RANGE' | 'DEFAULT';
 
 @Component({
@@ -27,7 +29,15 @@ export class SettingsViewComponent implements OnInit {
 
   amountForm!: FormGroup;
   scheduleForm!: FormGroup;
+  branchForm!: FormGroup;
+  employeeForm!: FormGroup;
+  employeeBranchesForm!: FormGroup;
   savedDefaultEstimatedAmount: number | null = null;
+  context: WorkContext | null = null;
+  branches: Branch[] = [];
+  employees: Employee[] = [];
+  selectedEmployee: Employee | null = null;
+  savedSelectedEmployeeBranchIds: number[] = [];
 
   activeTab: SettingsTab = 'amount';
   scheduleMode: ScheduleMode = 'DATE';
@@ -40,12 +50,26 @@ export class SettingsViewComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private settingsService: SettingsService,
+    private workContextService: WorkContextService,
     private messageService: MessageService
   ) { }
 
   ngOnInit() {
     this.amountForm = this.fb.group({
       defaultEstimatedAmount: [0, [Validators.min(0)]]
+    });
+    this.branchForm = this.fb.group({
+      name: ['', Validators.required],
+      address: ['']
+    });
+    this.employeeForm = this.fb.group({
+      displayName: [''],
+      email: ['', [Validators.required, Validators.email]],
+      temporaryPassword: ['', [Validators.required, Validators.minLength(6)]],
+      branchIds: [[], Validators.required]
+    });
+    this.employeeBranchesForm = this.fb.group({
+      branchIds: [[], Validators.required]
     });
 
     const today = new Date();
@@ -66,6 +90,16 @@ export class SettingsViewComponent implements OnInit {
         });
       },
       error: () => this.showError('No se pudo cargar la configuracion')
+    });
+
+    this.workContextService.loadContext().subscribe({
+      next: context => {
+        this.context = context;
+        this.branches = context.branches;
+        if (this.isAdmin()) {
+          this.loadEmployees();
+        }
+      }
     });
 
     this.loadSchedule();
@@ -100,6 +134,148 @@ export class SettingsViewComponent implements OnInit {
 
   setActiveTab(tab: SettingsTab) {
     this.activeTab = tab;
+    if (tab === 'employees') {
+      this.loadEmployees();
+    }
+    if (tab === 'branches') {
+      this.loadBranches();
+    }
+  }
+
+  isAdmin(): boolean {
+    return this.context?.userRole?.toUpperCase() === 'ADMIN';
+  }
+
+  loadBranches(): void {
+    if (!this.isAdmin()) return;
+
+    this.workContextService.getBranches().subscribe({
+      next: branches => this.branches = branches,
+      error: () => this.showError('No se pudieron cargar las sucursales')
+    });
+  }
+
+  createBranch(): void {
+    if (this.branchForm.invalid) {
+      this.branchForm.markAllAsTouched();
+      this.showError('Completa el nombre de la sucursal');
+      return;
+    }
+
+    this.workContextService.createBranch(this.branchForm.value).subscribe({
+      next: branch => {
+        this.branches = [...this.branches, branch];
+        this.branchForm.reset();
+        this.workContextService.loadContext().subscribe();
+        this.showSuccess('Sucursal creada correctamente');
+      },
+      error: () => this.showError('No se pudo crear la sucursal')
+    });
+  }
+
+  loadEmployees(): void {
+    if (!this.isAdmin()) return;
+
+    this.workContextService.getEmployees().subscribe({
+      next: employees => {
+        this.employees = employees;
+        if (this.selectedEmployee) {
+          const updatedSelection = employees.find(employee => employee.id === this.selectedEmployee!.id) ?? null;
+          this.selectEmployee(updatedSelection);
+        }
+      },
+      error: () => this.showError('No se pudieron cargar los empleados')
+    });
+  }
+
+  createEmployee(): void {
+    if (this.employeeForm.invalid || this.employeeForm.value.branchIds.length === 0) {
+      this.employeeForm.markAllAsTouched();
+      this.showError('Completa email, contraseña temporal y al menos una sucursal');
+      return;
+    }
+
+    this.workContextService.createEmployee(this.employeeForm.value).subscribe({
+      next: employee => {
+        this.employees = [...this.employees, employee];
+        this.employeeForm.reset({ displayName: '', email: '', temporaryPassword: '', branchIds: [] });
+        this.showSuccess('Empleado creado correctamente');
+      },
+      error: error => this.showError(error?.error?.message ?? 'No se pudo crear el empleado')
+    });
+  }
+
+  getEmployeeBranches(employee: Employee): string {
+    return employee.branches.map(branch => branch.name).join(', ');
+  }
+
+  selectEmployee(employee: Employee | null): void {
+    this.selectedEmployee = employee;
+    const branchIds = employee?.branches.map(branch => branch.id).sort((a, b) => a - b) ?? [];
+    this.savedSelectedEmployeeBranchIds = [...branchIds];
+    this.employeeBranchesForm.patchValue({ branchIds });
+    this.employeeBranchesForm.markAsPristine();
+  }
+
+  saveEmployeeBranches(): void {
+    if (!this.selectedEmployee) return;
+
+    const branchIds = this.employeeBranchesForm.get('branchIds')!.value ?? [];
+    if (branchIds.length === 0) {
+      this.showError('El empleado debe tener al menos una sucursal');
+      return;
+    }
+
+    this.workContextService.updateEmployeeBranches(this.selectedEmployee.id, { branchIds }).subscribe({
+      next: employee => {
+        this.employees = this.employees.map(item => item.id === employee.id ? employee : item);
+        this.selectEmployee(employee);
+        this.showSuccess('Accesos actualizados correctamente');
+      },
+      error: error => this.showError(error?.error?.message ?? 'No se pudieron actualizar los accesos')
+    });
+  }
+
+  hasSelectedEmployeeBranchChanges(): boolean {
+    const current = this.getSelectedEmployeeBranchIds();
+    return current.join('|') !== this.savedSelectedEmployeeBranchIds.join('|');
+  }
+
+  isSelectedEmployeeBranchSelected(branchId: number): boolean {
+    return this.getSelectedEmployeeBranchIds().includes(branchId);
+  }
+
+  toggleSelectedEmployeeBranch(branchId: number): void {
+    const control = this.employeeBranchesForm.get('branchIds')!;
+    const selected = this.getSelectedEmployeeBranchIds();
+    const next = selected.includes(branchId)
+      ? selected.filter(id => id !== branchId)
+      : [...selected, branchId].sort((a, b) => a - b);
+
+    control.setValue(next);
+    control.markAsDirty();
+    control.markAsTouched();
+  }
+
+  isEmployeeBranchSelected(branchId: number): boolean {
+    const selected = this.employeeForm.get('branchIds')?.value ?? [];
+    return selected.includes(branchId);
+  }
+
+  toggleEmployeeBranch(branchId: number): void {
+    const control = this.employeeForm.get('branchIds')!;
+    const selected: number[] = control.value ?? [];
+    const next = selected.includes(branchId)
+      ? selected.filter(id => id !== branchId)
+      : [...selected, branchId];
+
+    control.setValue(next);
+    control.markAsDirty();
+    control.markAsTouched();
+  }
+
+  getSelectedEmployeeBranchIds(): number[] {
+    return [...(this.employeeBranchesForm.get('branchIds')?.value ?? [])].sort((a, b) => a - b);
   }
 
   onScheduleModeChange(mode: ScheduleMode) {

@@ -1,6 +1,12 @@
+import { ClientResponse } from './client.model';
+
 export interface VisitResponse {
   id: number;
   shiftId: number;
+  client: ClientResponse | null;
+  attendedByUserId: number | null;
+  attendedByName: string | null;
+  attendedByEmail: string | null;
   totalAmount: number;
   currency: string | null;
   paymentStatus: string;

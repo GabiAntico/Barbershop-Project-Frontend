@@ -6,6 +6,7 @@ import { InputText } from 'primeng/inputtext';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TableModule } from 'primeng/table';
 import { VisitResponse } from '../../../models/visit.model';
+import { ClientResponse } from '../../../models/client.model';
 import { VisitService } from '../../../services/visit.service';
 
 type PaymentStatusFilter = 'ALL' | string;
@@ -76,6 +77,19 @@ export class VisitsViewComponent implements OnInit {
     if (!method) return '-';
 
     return this.paymentMethodLabels[method] ?? method ?? '-';
+  }
+
+  getAttendedByLabel(visit: VisitResponse): string {
+    return visit.attendedByName || visit.attendedByEmail || '-';
+  }
+
+  getClientLabel(client: ClientResponse | null): string {
+    if (!client) return '-';
+
+    const fullName = [client.firstName, client.lastName].filter(Boolean).join(' ');
+    const contact = client.email ? `${client.phoneNumber} - ${client.email}` : client.phoneNumber;
+
+    return fullName ? `${fullName} - ${client.phoneNumber}` : contact || '-';
   }
 
   onPaymentStatusChange(event: any): void {

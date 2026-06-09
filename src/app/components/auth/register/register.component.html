@@ -6,7 +6,51 @@
   >
     <div class="mb-5">
       <h1 class="text-xl font-bold text-slate-100">Crear cuenta</h1>
-      <p class="text-slate-300 text-sm">Registra un usuario para ingresar al sistema.</p>
+      <p class="text-slate-300 text-sm">Registra la barberia y tu usuario administrador.</p>
+    </div>
+
+    <div class="flex flex-col mb-4">
+      <label class="text-slate-200 mb-1">Nombre de la barberia</label>
+      <input
+        pInputText
+        type="text"
+        formControlName="barbershopName"
+        placeholder="Barberia Central"
+        class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 focus:!border-indigo-400 focus:!ring-0 !text-slate-100"
+      />
+    </div>
+
+    <div class="flex flex-col mb-4">
+      <label class="text-slate-200 mb-1">Tu nombre</label>
+      <input
+        pInputText
+        type="text"
+        formControlName="adminName"
+        placeholder="Nombre del administrador"
+        class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 focus:!border-indigo-400 focus:!ring-0 !text-slate-100"
+      />
+    </div>
+
+    <div class="flex flex-col mb-4">
+      <label class="text-slate-200 mb-1">Sucursal inicial</label>
+      <input
+        pInputText
+        type="text"
+        formControlName="branchName"
+        placeholder="Sucursal Centro"
+        class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 focus:!border-indigo-400 focus:!ring-0 !text-slate-100"
+      />
+    </div>
+
+    <div class="flex flex-col mb-4">
+      <label class="text-slate-200 mb-1">Direccion de la sucursal</label>
+      <input
+        pInputText
+        type="text"
+        formControlName="branchAddress"
+        placeholder="Opcional"
+        class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 focus:!border-indigo-400 focus:!ring-0 !text-slate-100"
+      />
     </div>
 
     <div class="flex flex-col mb-4">

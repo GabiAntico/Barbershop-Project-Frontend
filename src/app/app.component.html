@@ -15,8 +15,21 @@
 
     <div class="font-semibold tracking-tight truncate">Turnos</div>
 
+    @if (isLoggedIn() && context && context.branches.length > 0) {
+      <p-select
+        class="ml-auto w-44 sm:w-56 shrink-0"
+        styleClass="w-full h-9 rounded-lg !bg-slate-950 !border !border-slate-700 !text-slate-100 focus:!border-indigo-400"
+        [(ngModel)]="selectedBranchId"
+        (ngModelChange)="onBranchSelected($event)"
+        [options]="context.branches"
+        optionLabel="name"
+        optionValue="id"
+        aria-label="Sucursal activa"
+      ></p-select>
+    }
+
     <!-- Seccion actual -->
-    <div class="ml-auto text-sm text-slate-400 truncate text-right">
+    <div class="text-sm text-slate-400 truncate text-right" [class.ml-auto]="!isLoggedIn() || !context || context.branches.length === 0">
       {{ getCurrentSectionLabel() }}
     </div>
   </header>

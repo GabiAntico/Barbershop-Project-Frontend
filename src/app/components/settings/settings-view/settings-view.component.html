@@ -25,6 +25,30 @@
       >
         Horarios
       </button>
+      @if (isAdmin()) {
+        <button
+          type="button"
+          class="h-10 px-4 rounded-lg text-sm font-medium cursor-pointer whitespace-nowrap"
+          [class.bg-indigo-500]="activeTab === 'branches'"
+          [class.text-white]="activeTab === 'branches'"
+          [class.bg-slate-800]="activeTab !== 'branches'"
+          [class.text-slate-300]="activeTab !== 'branches'"
+          (click)="setActiveTab('branches')"
+        >
+          Sucursales
+        </button>
+        <button
+          type="button"
+          class="h-10 px-4 rounded-lg text-sm font-medium cursor-pointer whitespace-nowrap"
+          [class.bg-indigo-500]="activeTab === 'employees'"
+          [class.text-white]="activeTab === 'employees'"
+          [class.bg-slate-800]="activeTab !== 'employees'"
+          [class.text-slate-300]="activeTab !== 'employees'"
+          (click)="setActiveTab('employees')"
+        >
+          Empleados
+        </button>
+      }
     </div>
 
     @if (activeTab === 'amount') {
@@ -181,6 +205,177 @@
           Guardar horarios
         </button>
       </form>
+    }
+
+    @if (activeTab === 'branches' && isAdmin()) {
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
+        <form [formGroup]="branchForm" (ngSubmit)="createBranch()" class="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+          <h2 class="font-semibold mb-3">Nueva sucursal</h2>
+          <div class="flex flex-col mb-3">
+            <label class="text-slate-200 mb-1">Nombre</label>
+            <input
+              pInputText
+              formControlName="name"
+              class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 focus:!border-indigo-400 focus:!ring-0 !text-slate-100"
+            >
+          </div>
+          <div class="flex flex-col mb-4">
+            <label class="text-slate-200 mb-1">Direccion</label>
+            <input
+              pInputText
+              formControlName="address"
+              placeholder="Opcional"
+              class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 focus:!border-indigo-400 focus:!ring-0 !text-slate-100"
+            >
+          </div>
+          <button
+            type="submit"
+            [disabled]="branchForm.invalid"
+            class="h-10 w-full sm:w-auto px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed"
+          >
+            Crear sucursal
+          </button>
+        </form>
+
+        <div class="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+          <h2 class="font-semibold mb-3">Sucursales</h2>
+          <div class="space-y-2">
+            @for (branch of branches; track branch.id) {
+              <div class="rounded-lg border border-slate-800 bg-slate-900/70 p-3">
+                <div class="font-semibold">{{ branch.name }}</div>
+                <div class="text-sm text-slate-400">{{ branch.address || 'Sin direccion cargada' }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'employees' && isAdmin()) {
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
+        <form [formGroup]="employeeForm" (ngSubmit)="createEmployee()" class="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+          <h2 class="font-semibold mb-3">Nuevo empleado</h2>
+          <div class="flex flex-col mb-3">
+            <label class="text-slate-200 mb-1">Nombre</label>
+            <input
+              pInputText
+              formControlName="displayName"
+              placeholder="Opcional"
+              class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 focus:!border-indigo-400 focus:!ring-0 !text-slate-100"
+            >
+          </div>
+          <div class="flex flex-col mb-3">
+            <label class="text-slate-200 mb-1">Email</label>
+            <input
+              pInputText
+              formControlName="email"
+              type="email"
+              class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 focus:!border-indigo-400 focus:!ring-0 !text-slate-100"
+            >
+          </div>
+          <div class="flex flex-col mb-3">
+            <label class="text-slate-200 mb-1">Contraseña temporal</label>
+            <input
+              pInputText
+              formControlName="temporaryPassword"
+              type="text"
+              placeholder="Minimo 6 caracteres"
+              class="w-full h-10 rounded-lg !bg-slate-950 !border !border-slate-700 focus:!border-indigo-400 focus:!ring-0 !text-slate-100"
+            >
+          </div>
+          <div class="flex flex-col mb-4">
+            <label class="text-slate-200 mb-1">Sucursales asignadas</label>
+            <div class="grid grid-cols-1 gap-2">
+              @for (branch of branches; track branch.id) {
+                <label
+                  class="min-h-10 rounded-lg border px-3 py-2 flex items-center gap-3 cursor-pointer transition-colors"
+                  [ngClass]="isEmployeeBranchSelected(branch.id) ? 'bg-indigo-500/15 border-indigo-400 text-white' : 'bg-slate-950 border-slate-700 text-slate-200 hover:border-slate-500'"
+                >
+                  <input
+                    type="checkbox"
+                    class="h-4 w-4 accent-indigo-500"
+                    [checked]="isEmployeeBranchSelected(branch.id)"
+                    (change)="toggleEmployeeBranch(branch.id)"
+                  >
+                  <span class="font-medium">{{ branch.name }}</span>
+                </label>
+              }
+            </div>
+          </div>
+          <button
+            type="submit"
+            [disabled]="employeeForm.invalid"
+            class="h-10 w-full sm:w-auto px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed"
+          >
+            Crear empleado
+          </button>
+        </form>
+
+        <div class="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+          <h2 class="font-semibold mb-3">Empleados</h2>
+          <div class="space-y-2">
+            @for (employee of employees; track employee.id) {
+              <button
+                type="button"
+                class="w-full rounded-lg border p-3 text-left transition-colors cursor-pointer"
+                [ngClass]="selectedEmployee?.id === employee.id ? 'bg-indigo-500/15 border-indigo-400' : 'bg-slate-900/70 border-slate-800 hover:border-slate-600'"
+                (click)="selectEmployee(employee)"
+              >
+                <div class="font-semibold">{{ employee.displayName || employee.email }}</div>
+                <div class="text-sm text-slate-400">{{ employee.email }}</div>
+                <div class="text-xs text-slate-500 mt-1">{{ getEmployeeBranches(employee) }}</div>
+                @if (employee.temporaryPassword) {
+                  <div class="text-xs text-yellow-300 mt-1">Contraseña temporal pendiente</div>
+                }
+              </button>
+            }
+          </div>
+
+          @if (selectedEmployee) {
+            <div class="mt-4 rounded-lg border border-slate-800 bg-slate-900/70 p-3">
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div>
+                  <h3 class="font-semibold">Editar accesos</h3>
+                  <div class="text-sm text-slate-400">{{ selectedEmployee.displayName || selectedEmployee.email }}</div>
+                </div>
+                <button
+                  type="button"
+                  class="h-8 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm cursor-pointer"
+                  (click)="selectEmployee(null)"
+                >
+                  Cerrar
+                </button>
+              </div>
+
+              <div [formGroup]="employeeBranchesForm" class="grid grid-cols-1 gap-2">
+                @for (branch of branches; track branch.id) {
+                  <label
+                    class="min-h-10 rounded-lg border px-3 py-2 flex items-center gap-3 cursor-pointer transition-colors"
+                    [ngClass]="isSelectedEmployeeBranchSelected(branch.id) ? 'bg-indigo-500/15 border-indigo-400 text-white' : 'bg-slate-950 border-slate-700 text-slate-200 hover:border-slate-500'"
+                  >
+                    <input
+                      type="checkbox"
+                      class="h-4 w-4 accent-indigo-500"
+                      [checked]="isSelectedEmployeeBranchSelected(branch.id)"
+                      (change)="toggleSelectedEmployeeBranch(branch.id)"
+                    >
+                    <span class="font-medium">{{ branch.name }}</span>
+                  </label>
+                }
+              </div>
+
+              <button
+                type="button"
+                class="mt-3 h-10 w-full sm:w-auto px-4 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium cursor-pointer disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed"
+                [disabled]="!hasSelectedEmployeeBranchChanges() || getSelectedEmployeeBranchIds().length === 0"
+                (click)="saveEmployeeBranches()"
+              >
+                Guardar accesos
+              </button>
+            </div>
+          }
+        </div>
+      </div>
     }
   </div>
 </div>
